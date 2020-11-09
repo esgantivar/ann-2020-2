@@ -1,5 +1,6 @@
 import h5py
 import shutil
+import os
 from fuel.datasets import H5PYDataset
 import numpy as np
 from tqdm import tqdm
@@ -8,7 +9,6 @@ from keras.preprocessing.image import load_img, img_to_array
 def get_paths(name):
     paths = []
     names = []
-    print(f"{name}.txt")
     with open(f"{name}.txt", "r") as a_file:
         for line in a_file:
             stripped_line = line.strip()
@@ -17,21 +17,27 @@ def get_paths(name):
     return paths, names
 
 def build_subset(x):
+    if not os.path.exists('storage/breakhis'):
+        os.makedirs('storage/breakhis')
+       
+    if not os.path.exists(f'storage/breakhis/{x}PX'):
+        os.makedirs(f'storage/breakhis/{x}PX')
+        
     labels = {}
     paths, names = get_paths(f"BENIGN_{x}PX")
-    for path in paths:
-        shutil.copy(path, f"storage/breakhis/{x}X")
+    for path in tqdm(paths):
+        shutil.copy(path, f"storage/breakhis/{x}PX")
     for name in names:
         labels[name] = 0
     paths, names = get_paths(f"MALIGNANT_{x}PX")
-    for path in paths:
-        shutil.copy(path, f"storage/breakhis/{x}X")
+    for path in tqdm(paths):
+        shutil.copy(path, f"storage/breakhis/{x}PX")
     for name in names:
         labels[name] = 1
     return labels
 
 
-def generate_h5(labels, name='breakhis_40PX', path='storage/breakhis/40X', target_size=(256, 256), img_size=[256, 256]):
+def generate_h5(labels, name='breakhis_40PX', path='storage/breakhis/40PX', target_size=(256, 256), img_size=[256, 256]):
     n_samples = len(labels)
     n_test, n_dev = int(len(labels) * .3), int(len(labels) * .2)
     n_train = n_samples - n_test - n_dev

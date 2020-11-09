@@ -78,7 +78,7 @@ def main():
         }
     ]
 
-    for i in benigns:
+    for i in benigns:    
         f = open(i['name'],'w')
         for item in i['items']:
             f.write(item+'\n')
@@ -104,7 +104,7 @@ def main():
     ]
 
 
-    for i in malignant:
+    for i in malignant:    
         f = open(i['name'],'w')
         for item in i['items']:
             f.write(item+'\n')
